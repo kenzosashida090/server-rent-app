@@ -40,5 +40,6 @@ export const authMiddleware = (allowedRoles:string[])=>{
             res.status(400).json({message:"Access Denied"})
             return
         }
+        next()
     }
 }
