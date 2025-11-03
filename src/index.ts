@@ -5,7 +5,10 @@ import cors from "cors"
 import morgan from "morgan"
 import helmet from "helmet"
 import 'dotenv/config'; // ✅ esto carga automáticamente el archivo .env
-
+import { authMiddleware } from "./middleware/authMiddleware.js"
+//Routes
+import tentantRoutes from "../src/routes/tenantRoutes.js"
+import managerRoutes from "../src/routes/managerRoutes.js"
 // Config
 
 dotenv.config()
@@ -21,6 +24,9 @@ app.use(cors())
 app.get("/", (req:Request, res:Response)=>{
     res.send("This sucks")
 })
+
+app.use("/tenants", authMiddleware(["tenant"]),tentantRoutes)
+app.use("/managers", authMiddleware(["managger"]),managerRoutes)
 const port = process.env.PORT || 3002
 app.listen(port, 
     ()=>{
