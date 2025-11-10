@@ -61,7 +61,7 @@ export const listApplicationsDB = async(userId:string, userType:string)=>{
     }
 }
 
-export const createApplicationDB  = async(body)=>{
+export const createApplicationDB  = async(body: { applicationDate: any; status: any; propertyId: any; tenantCognitoId: any; name: any; email: any; phoneNumber: any; message: any })=>{
     try{
         const {
             applicationDate,
