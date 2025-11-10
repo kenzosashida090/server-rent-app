@@ -1,5 +1,4 @@
 import express from "express"
-import { authMiddleware } from "../middleware/authMiddleware.js"
 import {getManager, createManager, updateManager, getManagerProperties} from "../controllers/managerControllers.js"
 const router = express.Router()
 
