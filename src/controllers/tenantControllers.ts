@@ -1,6 +1,6 @@
 import type  { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { createTenantService, getTenantService } from "../service/tenantService.js";
+import { addFavoritePropertyDB, createTenantService, getTenantPropertiesDB, getTenantService, removeFavoritePropertyDB, updateTenantService } from "../service/tenantService.js";
 
 const prisma = new PrismaClient()
 
@@ -41,4 +41,56 @@ export const createTenant = async(req:Request, res:Response, next:NextFunction):
     }catch(error:any){
         console.log("error", error)
     }
+}
+export const updateTenant = async(req:Request, res:Response, next:NextFunction):Promise<void>=>{
+    try{
+        const {cognitoId} = req.params
+        const {name, email, phoneNumber} =req.body
+        const data =  {
+            name,
+            email,
+            phoneNumber
+        } 
+        const tenant = await updateTenantService(cognitoId!,data)
+        if(tenant){
+            res.status(202).json(tenant)
+        }else{
+            res.status(404).json({message:"There was an error updating tenant, try again"})
+        }
+    }catch(error:any){
+        console.log("error", error)
+    }
+}
+export const getTenantProperties = async(req:Request, res:Response, next:NextFunction):Promise<void>=>{
+    try{
+        const {cognitoId} = req.params
+        const tenantProperties = await  getTenantPropertiesDB(String(cognitoId))
+        if(tenantProperties){
+            res.status(202).json(tenantProperties)
+        }else{
+            res.status(404).json({message:"There was an error, try again"})
+        }
+    }catch(error:any){
+res.status(404).json({message:"Error retrieving tenants properties"})
+    }
+}
+
+export const addFavoriteProperty= async(req:Request, res:Response, next:NextFunction):Promise<void>=>{
+    try{
+        const updatedTenantFavorites = await addFavoritePropertyDB(req.params)
+        res.status(202).json(updatedTenantFavorites)
+    }catch(error: any){
+        res.status(404).json({message:error?.message})
+    }
+
+}
+
+export const removeFavoriteProperty = async(req:Request, res:Response, next:NextFunction):Promise<void>=>{
+    try{
+        const updatedTenantFavorites = await removeFavoritePropertyDB(req.params)
+        res.status(202).json(updatedTenantFavorites)
+    }catch(error){
+
+    }
+
 }
