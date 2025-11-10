@@ -4,12 +4,14 @@ import bodyParser from "body-parser"
 import cors from "cors"
 import morgan from "morgan"
 import helmet from "helmet"
-import 'dotenv/config'; // ✅ esto carga automáticamente el archivo .env
+import 'dotenv/config'; 
 import { authMiddleware } from "./middleware/authMiddleware.js"
-import propertyRoutes from "../src/routes/propertyRoutes.js"
 //Routes
+import propertyRoutes from "../src/routes/propertyRoutes.js"
 import tentantRoutes from "../src/routes/tenantRoutes.js"
 import managerRoutes from "../src/routes/managerRoutes.js"
+import leaseRoutes from "../src/routes/leaseRoutes.js"
+import applicationRoutes from "../src/routes/applicationRoutes.js"
 // Config
 
 dotenv.config()
@@ -29,6 +31,8 @@ app.get("/", (req:Request, res:Response)=>{
 app.use("/properties", propertyRoutes)
 app.use("/tenants", authMiddleware(["tenant"]),tentantRoutes)
 app.use("/managers", authMiddleware(["managger"]),managerRoutes)
+app.use("/leases", leaseRoutes)
+app.use("/applications", applicationRoutes )
 const port = process.env.PORT || 3002
 app.listen(port, 
     ()=>{
