@@ -9,9 +9,11 @@
     "dev": "tsx watch src/index.ts",
     "seed": "tsx prisma/seed.ts",
     "prisma:generate": "prisma generate",
-    "postprisma:generate": "shx cp -r node_modules/.prisma/client/index.d.ts ../client/app/types/prismaTypes.d.ts"
+    "postprisma:generate": "shx cp -r node_modules/.prisma/client/index.d.ts ../rent-app-next/app/types/prismaTypes.d.ts"
   },
-   "prisma": { "seed": "tsx prisma/seed.ts" },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -37,7 +39,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.0.0",
-    "@types/node": "^24.9.2",
+    "@types/node": "^24.11.0",
     "@types/terraformer__wkt": "^2.0.3",
     "@types/uuid": "^10.0.0",
     "concurrently": "^9.2.1",
