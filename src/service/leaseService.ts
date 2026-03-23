@@ -15,6 +15,21 @@ export const getLeasesDB = async()=>{
     }
 }
 
+export const getLeaseDB = async(id:string)=>{
+    const propertyId = Number(id)
+    try{
+        const leaseProperty = await prisma.lease.findMany({
+            where:{propertyId: propertyId},
+            include:{
+                tenant:true,
+            }
+        })
+        console.log('this is the properties', leaseProperty)
+        return leaseProperty
+    }catch(error){
+        console.log(error)
+    }
+}
 export const getLeasePaymentsDB  = async(id:string)=>{
     try{
         const payments = await prisma.payment.findMany({
