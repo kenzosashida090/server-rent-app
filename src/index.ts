@@ -30,7 +30,7 @@ app.get("/", (req:Request, res:Response)=>{
 
 app.use("/properties", propertyRoutes)
 app.use("/tenants", authMiddleware(["tenant"]),tentantRoutes)
-app.use("/managers", authMiddleware(["managger"]),managerRoutes)
+app.use("/managers", authMiddleware(["manager"]),managerRoutes)
 app.use("/leases", leaseRoutes)
 app.use("/applications", applicationRoutes )
 const port = process.env.PORT || 3002
