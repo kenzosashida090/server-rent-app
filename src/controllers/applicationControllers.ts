@@ -2,9 +2,9 @@
 import type  {  NextFunction, Request, Response } from "express";
 import { getLeasePaymentsDB, getLeasesDB } from "../service/leaseService.js";
 import { createApplicationDB, listApplicationsDB, updatingApplicationStatusDB } from "../service/applicationService.js";
-export const getApplicationsList = async(req:Request<{}, {}, {}, { userId: string; userType: string }>, res:Response):Promise<void>=>{
+export const getApplicationsList = async(req:Request<{userId: string; userType: string}, {}, {}, { userId: string; userType: string }>, res:Response):Promise<void>=>{
     try{
-        const {userId, userType} = req.query
+        const {userId, userType} = req.params
         const application = await listApplicationsDB(userId, userType)
         if(application){
             res.status(202).json(application)
