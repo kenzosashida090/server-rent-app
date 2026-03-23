@@ -76,7 +76,8 @@ async function deleteAllData(orderedFileNames: string[]) {
 }
 
 async function main() {
-  const dataDirectory = path.join(__dirname, "seedData");
+  const dir = import.meta.dirname;
+  const dataDirectory = path.join(dir, "seedData");
 
   const orderedFileNames = [
     "location.json", // No dependencies
