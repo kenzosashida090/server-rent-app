@@ -1,5 +1,7 @@
 import type  { NextFunction, Request, Response } from "express";
 import { getManagerDB, createManagerDB, updateManagerDB, getManagerPropertiesDB } from "../service/managerService.js";
+import { getLeaseProperty } from "../service/propertyService.js";
+import { getLeaseDB } from "../service/leaseService.js";
 
 
 export const getManager = async(req:Request, res:Response):Promise<void>=>{
@@ -19,7 +21,20 @@ export const getManager = async(req:Request, res:Response):Promise<void>=>{
         res.status(505).json({message:`Error retrieving tenent: ${error.message}`})
     }
 }
-
+export const getManagerPropertiesLeases = async(req:Request, res:Response):Promise<void> =>{
+    try{
+        const {id} = req.params
+        console.log('propr', id)
+         if(!id) {
+            res.status(401).json({message:"Unauthorized"})
+            return
+        }
+        const propertyLease = await getLeaseDB(id)
+        res.status(200).json(propertyLease)
+    }catch(error){
+        console.log(error, 'from getManagers')
+    }
+}
 export const createManager = async(req:Request, res:Response, next:NextFunction):Promise<void>=>{
     try{
         const {cognitoId, name, email, phoneNumber} =req.body
@@ -62,7 +77,7 @@ res.status(404).json({message:"Error updationg manager"})
 export const getManagerProperties = async(req:Request, res:Response, next:NextFunction):Promise<void>=>{
     try{
         const {cognitoId} = req.params
-
+        console.log(cognitoId,'--------')
         const managerProperties = await  getManagerPropertiesDB(String(cognitoId))
         if(managerProperties){
             res.status(202).json(managerProperties)
