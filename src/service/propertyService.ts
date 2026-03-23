@@ -18,9 +18,7 @@ type SettingsBody = {
 const prisma = new PrismaClient() // Create prisma client to access db
 export const getPropertiesDB = async(query:any) =>{
     try{
-
-    }catch(error){
-         const { 
+              const { 
             favoriteIds,
             priceMin,
             priceMax,
@@ -74,7 +72,7 @@ export const getPropertiesDB = async(query:any) =>{
         }
         if(propertyType && propertyType !== "any"){
             whereConditions.push(
-                Prisma.sql`p."propertyType" = ${propertyType}::"PropertyType"`
+                Prisma.sql`p."propertyType" = CAST(${propertyType} AS "PropertyType")`
             )
         }
         if(amenities && amenities !== "any"){
@@ -100,12 +98,12 @@ export const getPropertiesDB = async(query:any) =>{
         if(latitude && longitude) {
             const lat = parseFloat(latitude as string)
             const lng = parseFloat(longitude as string)
-            const radiusInKilometers = 1000;
+            const radiusInKilometers = 90000000;
             const degrees= radiusInKilometers / 111;
             whereConditions.push(
                 Prisma.sql`ST_DWithin(
-                    l.coordinates::geometry,
-                    ST_SetSRID(ST_MakePoint(${lng}, ${lat},), 4326)
+                    l."coordinates"::geometry,
+                    ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326),
                     ${degrees}
                 )`
             )
@@ -121,21 +119,23 @@ export const getPropertiesDB = async(query:any) =>{
                 'state', l.state,
                 'country', l.country,
                 'postalCode', l."postalCode",
-                "cooridnates", json_build_object(
-                    'longitude', ST_X(l."coordinates"::geometry)
+                'coordinates', json_build_object(
+                    'longitude', ST_X(l."coordinates"::geometry),
                     'latitude', ST_Y(l."coordinates"::geometry)
                 )
               ) as location
             FROM "Property" p
-            JOIN "Location" l ON p.*locationId* = l.id
+            JOIN "Location" l ON p."locationId" = l.id
             ${
                 whereConditions.length > 0
-                    ?  Prisma.sql`WHERE ${Prisma.join(whereConditions, " AND ")}`
+                    ?  Prisma.sql`WHERE ${Prisma.join(whereConditions, ` AND `)}`
                     : Prisma.empty
             }
         `;
         const properties = await prisma.$queryRaw(completeQuery)
         return properties
+    }catch(error){
+        console.log(error)
     }
 }
 export const getPropertyDB = async(id:string) =>{
@@ -153,8 +153,9 @@ export const getPropertyDB = async(id:string) =>{
             await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates from "Location" where id = ${property.location.id}`
         
         const geoJSON: any = wktToGeoJSON( coordinates[0]?.coordinates || "")
-        const longitude = geoJSON.coordianates[0]
-        const latitude  = geoJSON.coordinates[1]
+        console.log(geoJSON, "-------------")
+        const longitude = await geoJSON.coordinates?.[0]
+        const latitude  = await geoJSON.coordinates?.[1]
         
         const propertyWithCoordinates = {
             ...property,
@@ -166,12 +167,25 @@ export const getPropertyDB = async(id:string) =>{
                 }
             }
         }
-
         return propertyWithCoordinates
         
      }
     }catch(error){
+        console.log(error,'----------------')
         throw new Error("There was an error in the db")
+    }
+}
+
+
+export const getLeaseProperty = async(id:string)=>{
+    const propertyId = Number(id)
+    try{
+        const payments = await prisma.lease.findMany({
+            where:{propertyId}
+        })
+        return payments
+    }catch(error){
+        console.log('Error',error)
     }
 }
 export const createPropertyDB = async(data:any, images: Express.Multer.File[])=>{
@@ -197,7 +211,7 @@ export const createPropertyDB = async(data:any, images: Express.Multer.File[])=>
             pricePerMonth: parseFloat(propertyData.pricePerMonth),
             securityDeposit: parseFloat(propertyData.securityDeposit),
             applicationFee: parseFloat(propertyData.securityDeposit),
-            bes: parseInt(propertyData.beds),
+            beds: parseInt(propertyData.beds),
             baths: parseFloat(propertyData.baths),
             squareFeet: parseInt(propertyData.squareFeet)
 
