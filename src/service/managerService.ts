@@ -47,8 +47,8 @@ export const getManagerPropertiesDB = async(managerId:string) =>{
                 await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates from "Location" where id = ${property.location.id}`
                 
                 const geoJSON: any = wktToGeoJSON( coordinates[0]?.coordinates || "")
-                const longitude = geoJSON.coordianates[0]
-                const latitude  = geoJSON.coordinates[1]
+                const longitude = await geoJSON.coordinates[0]
+                const latitude  = await geoJSON.coordinates[1]
                 
                 const propertyWithCoordinates = {
                     ...property,
