@@ -5,6 +5,7 @@ import { createPropertyDB, getPropertiesDB, getPropertyDB } from "../service/pro
 export const getProperties= async(req:Request, res:Response):Promise<void>=>{
     try{
         const properties = await getPropertiesDB(req.query)
+        console.log(properties)
         if(properties){
             res.status(202).json(properties)
         }else{
@@ -16,7 +17,8 @@ export const getProperties= async(req:Request, res:Response):Promise<void>=>{
 }
 export const getProperty= async(req:Request, res:Response):Promise<void>=>{
     try{
-        const {id}= req.query
+        const {id}= req.params
+
         const property = await getPropertyDB(String(id))
         if(property){
             res.status(202).json(property)
