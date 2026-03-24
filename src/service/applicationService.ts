@@ -1,6 +1,7 @@
-import { ApplicationStatus, PrismaClient } from "@prisma/client"
+import { PrismaClient } from "@prisma/client"
 import { calculateNextPaymentDate } from "../utils/paymentDate.js"
 import { connect } from "http2"
+import type { ApplicationStatus } from "../types/prismaTypes.js"
 
 const prisma = new PrismaClient()
 export const listApplicationsDB = async(userId:string, userType:string)=>{
